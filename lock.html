@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Clock</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0; /* Default background color */
+        color: #333; /* Default text color */
+    }
+    #clock {
+        font-size: 48px;
+        margin-top: 50px;
+    }
+    .theme-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #timeInput {
+        margin-top: 20px;
+        padding: 5px;
+        font-size: 16px;
+    }
+    #date {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Live Clock</h1>
+<div id="clock"></div>
+<div id="date"></div>
+
+<button class="theme-btn" onclick="changeTheme()">Change Theme</button>
+<input type="time" id="timeInput">
+<button class="theme-btn" onclick="changeTime()">Change Time</button>
+
+<script>
+    let themeIndex = 0;
+    const themes = [
+        { backgroundColor: '#f0f0f0', textColor: '#333' }, // Default
+        { backgroundColor: '#007bff', textColor: '#fff' }, // Blue
+        { backgroundColor: '#8a2be2', textColor: '#fff' }, // Purple
+        { backgroundColor: '#ff6347', textColor: '#fff' }, // Red
+    ];
+
+    function changeTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        const { backgroundColor, textColor } = themes[themeIndex];
+        document.body.style.backgroundColor = backgroundColor;
+        document.body.style.color = textColor;
+    }
+
+    function updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const meridiem = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Convert to 12-hour format
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds} ${meridiem}`;
+        document.getElementById('clock').textContent = timeString;
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString('en-US', options);
+        document.getElementById('date').textContent = dateString;
+    }
+
+    function changeTime() {
+        const timeInput = document.getElementById('timeInput').value;
+        const [hours, minutes] = timeInput.split(':').map(Number);
+        const now = new Date();
+        now.setHours(hours);
+        now.setMinutes(minutes);
+        now.setSeconds(0);
+        updateClock();
+    }
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+
+    // Initial call to display the clock immediately
+    updateClock();
+</script>
+
+</body>
+</html>
